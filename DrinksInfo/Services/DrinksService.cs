@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace DrinksInfo.Services;
 
@@ -19,12 +19,38 @@ public class DrinksService
         _client.DefaultRequestHeaders.Accept.Add(
             new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
     }
-    public async Task<List<Category>?> GetDrinkCategories()
+    public async Task<List<Category>> GetDrinkCategories()
     {
         var response = await _client.GetStringAsync("/api/json/v1/1/list.php?c=list");
 
-        Categories Categories = JsonConvert.DeserializeObject<Categories>(response) ?? new Categories();
+        var categoryList = new List<Category>();
 
-        return Categories.CategoryList;
+        if (!string.IsNullOrWhiteSpace(response))
+        {
+            Categories Categories = JsonSerializer.Deserialize<Categories>(response);
+            categoryList = Categories.CategoryList;
+        }
+
+
+        return categoryList;
+    }
+
+    public async Task<List<Drink>> GetDrinksFromCategory(string category)
+    {
+        var drinks = new List<Drink>();
+        var response = await _client.GetStringAsync($"/api/json/v1/1/filter.php?c={category}");
+
+        if (!string.IsNullOrWhiteSpace(response))
+        {
+            DrinkList drinkList = JsonSerializer.Deserialize<DrinkList>(response);
+            drinks = drinkList.Drinks;
+        }
+
+        return drinks;
+    }
+
+    public async Task<DrinkDetail> GetDrinkDetail(string id)
+    {
+
     }
 }
