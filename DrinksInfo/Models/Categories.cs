@@ -1,21 +1,16 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using System.Text.Json.Serialization;
 
 namespace DrinksInfo.Models;
 
 public class Categories
 {
-    [JsonProperty("drinks")]
+    [JsonPropertyName("drinks")]
     public List<Category>? CategoryList { get; set; }
 }
 
 public class Category
 {
-    [JsonProperty("strCategory")]
+    [JsonPropertyName("strCategory")]
     public required string DrinkCategory { get; set; }
 }

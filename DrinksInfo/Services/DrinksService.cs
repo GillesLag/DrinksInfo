@@ -49,8 +49,17 @@ public class DrinksService
         return drinks;
     }
 
-    public async Task<DrinkDetail> GetDrinkDetail(string id)
+    public async Task<DrinkDetail> GetDrinkDetail(string name)
     {
+        var response = await _client.GetStringAsync($"/api/json/v1/1/search.php?s={name}");
+        DrinkDetail drinkDetails = new DrinkDetail();
 
+        if (!string.IsNullOrWhiteSpace(response))
+        {
+            DrinkDetailObject dringDetailObject = JsonSerializer.Deserialize<DrinkDetailObject>(response);
+            drinkDetails = dringDetailObject.DrinkDetailList.FirstOrDefault();
+        }
+
+        return drinkDetails;
     }
 }
